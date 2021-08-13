@@ -2,7 +2,7 @@ import io.kotless.plugin.gradle.dsl.kotless
 
 plugins {
     kotlin("jvm") version "1.4.21"
-    id("io.kotless") version "0.1.7-beta-5" apply true
+    id("io.kotless") version "0.2.0-e" apply true
 }
 
 group = "org.liamjd.kotless"
@@ -11,11 +11,13 @@ version = "0.1.0-SNAPSHOT"
 repositories {
     jcenter()
     mavenCentral()
+    mavenLocal()
 }
 
 dependencies {
     implementation(kotlin("stdlib"))
-    implementation("io.kotless", "ktor-lang", "0.1.7-beta-5")
+    implementation("io.kotless", "ktor-lang", "0.2.0-c")
+    implementation("io.kotless", "ktor-lang-aws", "0.2.0-c")
 }
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
@@ -27,11 +29,19 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
 
 kotless {
     config {
-       bucket = "kotless.liamjd.org"
-        terraform {
-            profile = "liam" // IAM AWS profile name
-            region = "eu-west-2"
+        aws {
+            storage {
+                bucket = "kotless.liamjd.org"
+            }
+            terraform {
+                profile = "default" // IAM AWS profile name
+                region = "eu-west-2"
+            }
         }
+    }
+
+    webapp {
+
     }
 
     extensions {
