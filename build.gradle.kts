@@ -1,4 +1,5 @@
 import io.kotless.plugin.gradle.dsl.kotless
+import io.terraformkt.aws.data.route53.route53_delegation_set
 
 plugins {
     kotlin("jvm") version "1.4.21"
@@ -30,6 +31,7 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
 kotless {
     config {
         aws {
+            prefix = "kotless-beta"
             storage {
                 bucket = "kotless.liamjd.org"
             }
@@ -41,7 +43,7 @@ kotless {
     }
 
     webapp {
-
+//        dns("kotlessbeta","liamjd.org")
     }
 
     extensions {

@@ -9,7 +9,6 @@ import java.io.File
 fun Routing.statics() {
 	static {
 		staticRootFolder = File("src/main/resources/static")
-		resource("/","static/index.html")
-
+		default("index.html")
 	}
 }

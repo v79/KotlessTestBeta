@@ -12,6 +12,9 @@ class Server : KotlessAWS() {
 			get("/fly") {
 				call.respondText { "Fly me to the moon, let me sing among the stars" }
 			}
+			get("/wibble") {
+				call.respondText { "You said wibble, I say wobble" }
+			}
 		}
 	}
 }
