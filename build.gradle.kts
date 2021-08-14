@@ -3,7 +3,7 @@ import io.terraformkt.aws.data.route53.route53_delegation_set
 
 plugins {
     kotlin("jvm") version "1.4.21"
-    id("io.kotless") version "0.2.0-f" apply true
+    id("io.kotless") version "0.2.0-g" apply true
 }
 
 group = "org.liamjd.kotless"
