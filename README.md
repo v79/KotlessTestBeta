@@ -30,7 +30,7 @@ I had to build Kotless 0.2.0 locally, as I had real problems getting `terraform`
 ###At Amazon AWS
 
 - The functions are accessed via an API Gateway. There's a default stage created, called **1** (can this be renamed?).
-- You need the `Invoke URL` from the stage editor - format is https://_something_.execute-api._region_.amazonaws.com/1 .
+- You need the `Invoke URL` from the stage editor - format is https://_something_.execute-api._region_.amazonaws.com/1 . - can also be found as `application_url` at the end of the terrform deployment logs
 - Set up a Cloudfront distribution - the origin domain is this Invoke URL, minus the https:// and the stage - AWS won't offer this as a dropdown option; it only offers the S3 buckets. Don't choose the bucket!
 - Set the origin path to be the stage (e.g. `/1`)
 - To tie this to your own domain, go to Route 53 and add a Simple A record directing traffic to the cloudfront domain (_something_.cloudfront.net)
@@ -47,3 +47,7 @@ fun Routing.statics() {
 	}
 }
 ```
+
+###Authentication
+
+Something I always struggle with. Trying to use AWS Cognito with a hosted UI for this.

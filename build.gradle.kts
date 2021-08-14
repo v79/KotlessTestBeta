@@ -3,7 +3,7 @@ import io.terraformkt.aws.data.route53.route53_delegation_set
 
 plugins {
     kotlin("jvm") version "1.4.21"
-    id("io.kotless") version "0.2.0-e" apply true
+    id("io.kotless") version "0.2.0-f" apply true
 }
 
 group = "org.liamjd.kotless"
@@ -17,8 +17,13 @@ repositories {
 
 dependencies {
     implementation(kotlin("stdlib"))
-    implementation("io.kotless", "ktor-lang", "0.2.0-c")
-    implementation("io.kotless", "ktor-lang-aws", "0.2.0-c")
+    implementation("io.kotless", "ktor-lang", "0.2.0-f")
+    implementation("io.kotless", "ktor-lang-aws", "0.2.0-f")
+    implementation("io.ktor:ktor-auth:1.5.0")
+    implementation("io.ktor:ktor-auth-jwt:1.5.0")
+    implementation("io.ktor:ktor-client-core:1.5.0")
+    implementation("io.ktor:ktor-client-cio:1.5.0")
+    implementation("io.ktor:ktor-client-serialization:1.5.0")
 }
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
