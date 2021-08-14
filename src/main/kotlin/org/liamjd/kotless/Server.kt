@@ -65,6 +65,7 @@ class Server : KotlessAWS() {
 				call.respondText { "You said wibble, I say wobble" }
 			}
 
+			// it would be a shame if I had to do this check for every route
 			get("/secret") {
 				val userSession = call.sessions.get<UserSession>()
 				if(userSession != null) {
@@ -75,18 +76,26 @@ class Server : KotlessAWS() {
 				}
 			}
 
+			get("/logout") {
+				call.sessions.clear<UserSession>()
+				call.respondRedirect("/")
+			}
+
+			// the documentation suggests this should be inside the "authenticate" block, but the app fails if I do.
+			// it works when not authenticated
+			get("/callback") {
+				println("Request for 'callback' received")
+				val principal: OAuthAccessTokenResponse.OAuth2? = call.principal()
+				call.sessions.set(UserSession(principal?.accessToken.toString()))
+				call.respondRedirect("/secret")
+			}
+
 			authenticate("aws-cognito") {
 				get("/login") {
 					println("Request for 'login' received")
 					// Redirects to 'authorizeUrl' automatically
 				}
 
-				get("/callback") {
-					println("Request for 'callback' received")
-					val principal: OAuthAccessTokenResponse.OAuth2? = call.principal()
-					call.sessions.set(UserSession(principal?.accessToken.toString()))
-					call.respondRedirect("/secret")
-				}
 			}
 		}
 	}
