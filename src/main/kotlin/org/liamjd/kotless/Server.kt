@@ -7,7 +7,6 @@ import io.ktor.client.*
 import io.ktor.client.engine.cio.*
 import io.ktor.client.features.json.*
 import io.ktor.client.features.json.serializer.*
-import io.ktor.client.request.*
 import io.ktor.features.*
 import io.ktor.http.*
 import io.ktor.response.*
@@ -15,7 +14,6 @@ import io.ktor.routing.*
 import io.ktor.sessions.*
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.serializer
 import org.slf4j.LoggerFactory
 
 class Server : KotlessAWS() {
@@ -23,15 +21,15 @@ class Server : KotlessAWS() {
 	override fun prepare(app: Application) {
 
 		app.install(Sessions) {
-			cookie<UserSession>("user_session")
+			cookie<UserSession>("user_session") {
+//				cookie.secure = true // app crashes if this is true, complains about https
+			}
 		}
 		val httpClient = HttpClient(CIO) {
 			install(JsonFeature) {
 				serializer = KotlinxSerializer()
 			}
 		}
-
-		println("client: $httpClient")
 
 		app.install(Authentication) {
 			oauth("aws-cognito") {
@@ -68,7 +66,7 @@ class Server : KotlessAWS() {
 			// it would be a shame if I had to do this check for every route
 			get("/secret") {
 				val userSession = call.sessions.get<UserSession>()
-				if(userSession != null) {
+				if (userSession != null) {
 					println("Request for 'secret' received")
 					call.respondText("You've found my secret")
 				} else {
@@ -86,6 +84,7 @@ class Server : KotlessAWS() {
 			get("/callback") {
 				println("Request for 'callback' received")
 				val principal: OAuthAccessTokenResponse.OAuth2? = call.principal()
+				println("principal: $principal")
 				call.sessions.set(UserSession(principal?.accessToken.toString()))
 				call.respondRedirect("/secret")
 			}

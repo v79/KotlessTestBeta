@@ -50,4 +50,45 @@ fun Routing.statics() {
 
 ###Authentication
 
-Something I always struggle with. Trying to use AWS Cognito with a hosted UI for this.
+Something I always struggle with. Trying to use AWS Cognito with a hosted UI for this, using the OAUTH standard.
+
+- You need a Ktor HttpClient to make the authentication requests
+- Install authentication and give it a name:
+```kotlin
+app.install(Authentication) {
+    oauth("aws-cognito") {
+        urlProvider = { "https://kotlessbeta.liamjd.org/callback" }
+//				urlProvider = { "http://localhost:8080/callback" }
+        providerLookup = {
+            OAuthServerSettings.OAuth2ServerSettings(
+                name = "cognito",
+                authorizeUrl = "https://[[COGNITO AUTH URL]].auth.eu-west-2.amazoncognito.com/oauth2/authorize",
+                accessTokenUrl = "https://[[COGITO AUTH URL]].auth.eu-west-2.amazoncognito.com/oauth2/token",
+                requestMethod = HttpMethod.Get,
+                defaultScopes = listOf("openid", "profile", "aws.cognito.signin.user.admin"),
+                clientId = "[[AWS COGNITO APP CLIENT ID]]",
+                clientSecret = "" // not sussed this out yet; I forgot to enable this when setting up the cognito user pool
+            )
+        }
+        client = httpClient
+    }
+}
+```
+- Now, you add the `authenicate` call to the routes which _perform the authentication_, such as the `login` route:
+```kotlin
+authenticate("aws-cognito") {
+      get("/login") {
+        // Redirects to 'authorizeUrl' automatically
+      }
+  }
+```
+- Then once authenticated, Cogntio returns to the given 'callback' URL with the authorisation token and user details. Store these in a session cookie and then redirect to the "logged in" landing page (which could be /). **The callback URL should not be in an authenticate block, despite what I've seen in documentation!**
+```kotlin
+get("/callback") {
+      val principal: OAuthAccessTokenResponse.OAuth2? = call.principal()
+      call.sessions.set(UserSession(principal?.accessToken.toString()))
+      call.respondRedirect("/secret")
+  }
+```
+
+What all this does seem to mean is that I need to check the session for the authorization for every root which should be secure. This seems to be different from how [Osiris][https://github.com/cjkent/osiris] handles it, where each secure root is in an authentication block and the engine handles the auth checking.

@@ -24,6 +24,13 @@ dependencies {
     implementation("io.ktor:ktor-client-core:1.5.0")
     implementation("io.ktor:ktor-client-cio:1.5.0")
     implementation("io.ktor:ktor-client-serialization:1.5.0")
+
+    // testing
+    testImplementation("io.ktor:ktor-server-test-host:1.5.0")
+    testImplementation("org.jetbrains.kotlin:kotlin-test:1.4.21")
+
+    implementation("io.ktor:ktor-client-mock:1.5.0")
+    testRuntimeOnly("org.junit.jupiter", "junit-jupiter-engine", "5.6.0")
 }
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
