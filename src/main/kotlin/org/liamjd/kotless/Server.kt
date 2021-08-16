@@ -8,12 +8,16 @@ import io.ktor.client.engine.cio.*
 import io.ktor.client.features.json.*
 import io.ktor.client.features.json.serializer.*
 import io.ktor.features.*
+import io.ktor.html.*
 import io.ktor.http.*
 import io.ktor.response.*
 import io.ktor.routing.*
 import io.ktor.sessions.*
+import kotlinx.html.*
+import kotlinx.html.dom.document
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import org.liamjd.kotless.html.heading
 import org.slf4j.LoggerFactory
 
 class Server : KotlessAWS() {
@@ -34,7 +38,6 @@ class Server : KotlessAWS() {
 		app.install(Authentication) {
 			oauth("aws-cognito") {
 				urlProvider = { "https://kotlessbeta.liamjd.org/callback" }
-//				urlProvider = { "http://localhost:8080/callback" }
 				providerLookup = {
 					OAuthServerSettings.OAuth2ServerSettings(
 						name = "cognito",
@@ -56,7 +59,19 @@ class Server : KotlessAWS() {
 			statics()
 			get("/fly") {
 				println("Request for 'fly' received")
-				call.respondText { "Fly me to the moon, let me sing among the stars" }
+				val flyText = "Fly me to the moon"
+				call.respondHtml(HttpStatusCode.OK) {
+					document {
+						heading(flyText)
+						body {
+							div(classes = "container") {
+								h1 {
+									+flyText
+								}
+							}
+						}
+					}
+				}
 			}
 			get("/wibble") {
 				println("Request for 'wibble' received")

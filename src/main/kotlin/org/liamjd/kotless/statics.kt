@@ -10,5 +10,13 @@ fun Routing.statics() {
 	static {
 		staticRootFolder = File("src/main/resources/static")
 		default("index.html")
+
+		static("css") {
+			files("css")
+		}
+
+		static("js") {
+			files("js")
+		}
 	}
 }
