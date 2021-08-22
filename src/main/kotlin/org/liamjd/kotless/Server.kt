@@ -8,22 +8,27 @@ import io.ktor.client.engine.cio.*
 import io.ktor.client.features.json.*
 import io.ktor.client.features.json.serializer.*
 import io.ktor.features.*
-import io.ktor.html.*
 import io.ktor.http.*
+import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.routing.*
+import io.ktor.serialization.*
 import io.ktor.sessions.*
-import kotlinx.html.*
-import kotlinx.html.dom.document
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import org.liamjd.kotless.html.heading
+import org.liamjd.kotless.aws.S3ServiceImpl
 import org.slf4j.LoggerFactory
 
 class Server : KotlessAWS() {
 	private val logger = LoggerFactory.getLogger(Server::class.java)
 	override fun prepare(app: Application) {
 
+
+		val s3Service = S3ServiceImpl()
+		app.install(CallLogging)
+		app.install(ContentNegotiation) {
+			json()
+		}
 		app.install(Sessions) {
 			cookie<UserSession>("user_session") {
 //				cookie.secure = true // app crashes if this is true, complains about https
@@ -53,41 +58,10 @@ class Server : KotlessAWS() {
 			}
 		}
 
-		app.install(ContentNegotiation)
-
 		app.routing {
 			statics()
-			get("/fly") {
-				println("Request for 'fly' received")
-				val flyText = "Fly me to the moon"
-				call.respondHtml(HttpStatusCode.OK) {
-					document {
-						heading(flyText)
-						body {
-							div(classes = "container") {
-								h1 {
-									+flyText
-								}
-							}
-						}
-					}
-				}
-			}
-			get("/wibble") {
-				println("Request for 'wibble' received")
-				call.respondText { "You said wibble, I say wobble" }
-			}
+			homepage()
 
-			// it would be a shame if I had to do this check for every route
-			get("/secret") {
-				val userSession = call.sessions.get<UserSession>()
-				if (userSession != null) {
-					println("Request for 'secret' received")
-					call.respondText("You've found my secret")
-				} else {
-					call.respondText("Oh no you don't!")
-				}
-			}
 
 			get("/logout") {
 				call.sessions.clear<UserSession>()
@@ -109,7 +83,33 @@ class Server : KotlessAWS() {
 					println("Request for 'login' received")
 					// Redirects to 'authorizeUrl' automatically
 				}
+			}
 
+
+			/**
+			 * Kotless doesn't support path parameters when deploying to AWS via terraform
+			 * I'd have to use a PUT or POST rather than a GET, which is much less semantically pure.
+			 * Or I just forget the named parameters feature and just use call.parameters. That works, I suppose.
+			 */
+			get("/load-markdown") {
+				//TODO: secure this!
+				val s3Key = call.parameters["s3Key"]
+				if (s3Key != null) {
+					println("Loading source file with key $s3Key")
+					call.respondText { s3Service.loadTextFile("src.liamjd.org", s3Key) }
+				} else {
+					call.respondText { "Request for file ${s3Key} returned no result/" }
+				}
+			}
+
+
+			post("/save-test") {
+				println("Attempting to save")
+//				val testForm = Json.parseToJsonElement(call.receiveText())
+//				val testForm = call.receiveParameters()
+				val testForm = call.receive<TestForm>()
+				println(testForm)
+				call.respond(status = HttpStatusCode.OK, message = "I haven't actually saved...$testForm")
 			}
 		}
 	}
@@ -126,3 +126,6 @@ data class UserInfo(
 	val picture: String,
 	val locale: String
 )
+
+@Serializable
+data class TestForm(val title: String, val slug: String)

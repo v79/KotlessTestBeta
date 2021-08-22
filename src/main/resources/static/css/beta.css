@@ -10305,12 +10305,8 @@ a.has-text-danger-dark:hover, a.has-text-danger-dark:focus {
   padding: 3rem 1.5rem 6rem;
 }
 
-body {
-  color: #8c6060;
-}
-
-.container {
-  border-bottom-color: #8c6060;
+.pink {
+  background-color: pink;
 }
 
 /*# sourceMappingURL=beta.css.map */
