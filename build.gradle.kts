@@ -3,6 +3,7 @@ import com.meiuwa.gradle.sass.SassTask
 
 plugins {
     kotlin("jvm") version "1.4.21"
+    kotlin("plugin.serialization") version "1.5.20"
     id("io.kotless") version "0.2.0-g" apply true
     id("com.meiuwa.gradle.sass") version "2.0.0"
 }
@@ -13,6 +14,7 @@ version = "0.1.0-SNAPSHOT"
 val ktorVersion by extra("1.5.0")
 val kotlinVersion by extra("1.4.21")
 val kotlessVersion by extra("0.2.0-f")
+val awsVersion by extra("2.17.20")
 
 repositories {
     jcenter()
@@ -30,13 +32,18 @@ dependencies {
     implementation("io.ktor:ktor-client-cio:$ktorVersion")
     implementation("io.ktor:ktor-client-serialization:$ktorVersion")
     implementation("io.ktor:ktor-html-builder:$ktorVersion")
+    implementation("io.ktor:ktor-serialization:$ktorVersion")
+
+    // amazon
+    implementation("software.amazon.awssdk:s3:$awsVersion")
 
     // testing
     testImplementation("io.ktor:ktor-server-test-host:$ktorVersion")
     testImplementation("org.jetbrains.kotlin:kotlin-test:1.4.21")
-
     implementation("io.ktor:ktor-client-mock:$ktorVersion")
-    testRuntimeOnly("org.junit.jupiter", "junit-jupiter-engine", "5.6.0")
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.6.0")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.6.0")
+
 }
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
@@ -71,6 +78,7 @@ kotless {
     extensions {
         local {
             useAWSEmulation = false
+            port = 8081
         }
     }
 }
@@ -89,4 +97,8 @@ sass {
 tasks.named<SassTask>("sassCompile") {
     source = fileTree("src/main/resources/sass/")
     output = file("src/main/resources/static/css")
+}
+
+tasks.test {
+    useJUnitPlatform()
 }

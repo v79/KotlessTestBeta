@@ -23,7 +23,7 @@ class Server : KotlessAWS() {
 	private val logger = LoggerFactory.getLogger(Server::class.java)
 	override fun prepare(app: Application) {
 
-
+		val AWS_COGNITO_ID = System.getenv("AWS_COGNITO_ID_KOTLESSTESTBETA") // not currently used
 		val s3Service = S3ServiceImpl()
 		app.install(CallLogging)
 		app.install(ContentNegotiation) {
@@ -50,7 +50,7 @@ class Server : KotlessAWS() {
 						accessTokenUrl = "https://kotless-beta-liamjd.auth.eu-west-2.amazoncognito.com/oauth2/token",
 						requestMethod = HttpMethod.Get,
 						defaultScopes = listOf("openid", "profile", "aws.cognito.signin.user.admin"),
-						clientId = "49ja2064q2cne190e27ee6plnl",
+						clientId = AWS_COGNITO_ID,
 						clientSecret = ""
 					)
 				}

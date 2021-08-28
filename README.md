@@ -92,3 +92,13 @@ get("/callback") {
 ```
 
 What all this does seem to mean is that I need to check the session for the authorization for every root which should be secure. This seems to be different from how [Osiris][https://github.com/cjkent/osiris] handles it, where each secure root is in an authentication block and the engine handles the auth checking.
+
+## Dealing with S3
+
+Brain pain was real trying to get S3 to return a file & folder hierarchy where no such thing exists - even though S3's own web interface presents such a thing and has handy buttons like "create folder." [this page](https://realguess.net/2014/05/24/amazon-s3-delimiter-and-prefix/) finally helped me understand what I needed to do to get what I wanted.
+
+## Dealing with Kotless
+
+Kotless doesn't support named parameters in routes, like `/load-markdown/{s3key}` - have to just define the route as `/load-markdown` and then get the parameters from `call.parameters["s3key"]`.
+
+Kotless and terraform do not do well at deleting resources (api gateway calls) which should no longer exist. I have to go into the AWS console and delete them manually before the terraform build will work.
