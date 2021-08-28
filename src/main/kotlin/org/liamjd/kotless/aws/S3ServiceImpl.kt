@@ -15,11 +15,13 @@ import java.time.Instant
 
 class S3ServiceImpl : S3Service {
 
-	// TODO: externalise these serets
-	private val awsCreds = AwsBasicCredentials.create("AKIARIPUVF7CDS3JHUH2", "gZM1x4Si8kbBurgjEYKPAZ1Uzl8oDtJdq606hjlk")
+	private val AWS_ACCESS_KEY = System.getenv("AWS_ACCESS_KEY_PYLON")
+	private val AWS_SECRET_KEY = System.getenv("AWS_SECRET_KEY_PYLON")
+	private val awsCreds = AwsBasicCredentials.create(AWS_ACCESS_KEY, AWS_SECRET_KEY )
 	private val s3 = S3Client.builder().credentialsProvider(StaticCredentialsProvider.create(awsCreds)).build()
 
 	override fun getBucketListing(bucket: String, prefixFolder: String): List<S3File> {
+
 		try {
 			val folderRequest = ListObjectsRequest.builder().bucket(bucket).delimiter("/").prefix(prefixFolder).build()
 			val folderResponse = s3.listObjects(folderRequest)

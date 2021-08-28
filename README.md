@@ -101,4 +101,21 @@ Brain pain was real trying to get S3 to return a file & folder hierarchy where n
 
 Kotless doesn't support named parameters in routes, like `/load-markdown/{s3key}` - have to just define the route as `/load-markdown` and then get the parameters from `call.parameters["s3key"]`.
 
-Kotless and terraform do not do well at deleting resources (api gateway calls) which should no longer exist. I have to go into the AWS console and delete them manually before the terraform build will work.
+Kotless and terraform do not do well at deleting resources (api gateway calls) which should no longer exist. I have to go into the AWS console and delete them manually before the terraform build will work. A [defect has been raised with Kotless](https://github.com/JetBrains/kotless/issues/110).
+
+Not sure how to handle secrets such as AWS credentials. In the past, I've used system environment variables and manually added them to the AWS Lambda functions after the function is deployed. But Kotless creates multiple lambdas from my test project, and it deletes and recreates them quite readily. So that's not a stable place to store them. I might be able to use AWS's secrets manager, but at $0.40 per secret per month, that may start to add up as I do more experiments.
+
+Kotless apparently has an annotation to help use the AWS secrets manager, but I don't understand the documentation.
+
+So for now I'm adding the credentials to my local system environment variables, and then getting them using `System.getenv()`. They are passed to the AWS lambda functions through a gradle instruction:
+
+```kotlin
+webapp {
+  lambda {
+      environment = hashMapOf(
+        "secret1" to System.getenv("secret1"),
+        "secret2" to System.getenv("secret2")
+      )
+  }
+}
+```

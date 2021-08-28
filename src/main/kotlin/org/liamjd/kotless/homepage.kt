@@ -135,8 +135,8 @@ private fun FlowContent.fileListingPanel(fileList: List<S3File>) {
 							onClick = "loadMarkdownFile('${s3obj.s3key}');"
 							+s3obj.fileName
 						}
-						small {
-							+" (${s3obj.fileSize})"
+						small(classes = "is-pulled-right") {
+							+" (${s3obj.fileSize}bytes)"
 						}
 					}
 				}
