@@ -23,6 +23,7 @@ repositories {
 	mavenLocal()
 }
 
+@Suppress("GradlePackageUpdate")
 dependencies {
 	implementation(kotlin("stdlib"))
 	implementation("io.kotless:ktor-lang:$kotlessVersion")
@@ -40,7 +41,7 @@ dependencies {
 
 	// testing
 	testImplementation("io.ktor:ktor-server-test-host:$ktorVersion")
-	testImplementation("org.jetbrains.kotlin:kotlin-test:1.4.21")
+	testImplementation("org.jetbrains.kotlin:kotlin-test:$kotlinVersion")
 	implementation("io.ktor:ktor-client-mock:$ktorVersion")
 	testImplementation("org.junit.jupiter:junit-jupiter-api:$jupiterVersion")
 	testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$jupiterVersion")
