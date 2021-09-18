@@ -64,6 +64,7 @@ fun Routing.homepage() {
 						}
 					}
 				}
+
 				script(
 					type = ScriptType.textJavaScript,
 					src = "https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js",
@@ -132,11 +133,9 @@ private fun FlowContent.fileListingPanel(fileList: List<S3File>) {
 				} else {
 					div(classes = "panel-block") {
 						p {
+							title = "${s3obj.fileSize} bytes"
 							onClick = "loadMarkdownFile('${s3obj.s3key}');"
 							+s3obj.fileName
-						}
-						small(classes = "is-pulled-right") {
-							+" (${s3obj.fileSize}bytes)"
 						}
 					}
 				}

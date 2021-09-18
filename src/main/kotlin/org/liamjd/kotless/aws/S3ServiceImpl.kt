@@ -3,7 +3,6 @@ package org.liamjd.kotless.aws
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider
 import software.amazon.awssdk.core.ResponseBytes
-import software.amazon.awssdk.core.ResponseInputStream
 import software.amazon.awssdk.services.s3.S3Client
 import software.amazon.awssdk.services.s3.model.GetObjectRequest
 import software.amazon.awssdk.services.s3.model.GetObjectResponse
@@ -76,7 +75,7 @@ data class S3File(val s3key: String, val fileName: String, val fileSize: Long, v
 }
 
 
-class FileNode(val key: String, val filename: String) {
+/*class FileNode(val key: String, val filename: String) {
 	var isFolder: Boolean = false
 	var parent: FileNode? = null
 	var children: Set<FileNode> = emptySet()
@@ -84,4 +83,4 @@ class FileNode(val key: String, val filename: String) {
 	override fun toString(): String {
 		return "Key: $key : $filename [parent=$parent, childCount=${children.size}"
 	}
-}
+}*/
