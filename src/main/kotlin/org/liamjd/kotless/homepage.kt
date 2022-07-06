@@ -10,13 +10,14 @@ import org.liamjd.kotless.html.container
 import org.liamjd.kotless.html.heading
 import org.liamjd.kotless.html.navigation
 import org.liamjd.kotless.html.panel
+import org.slf4j.LoggerFactory
 
 fun Routing.homepage() {
-
+	val logger = LoggerFactory.getLogger(this::class.java)
 	val s3Service = S3ServiceImpl()
 
 	get("/") {
-
+		logger.info("Rendering homepage")
 		val fileList = s3Service.getBucketListing("src.liamjd.org", "sources/2020/")
 
 		call.respondHtml {
@@ -63,6 +64,9 @@ fun Routing.homepage() {
 							}
 						}
 					}
+				}
+				footer {
+					p { + "Pylon Editor" }
 				}
 
 				script(

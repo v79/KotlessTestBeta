@@ -1,15 +1,16 @@
 import com.meiuwa.gradle.sass.SassTask
+import io.kotless.plugin.gradle.dsl.KotlessGradleConfig
 import io.kotless.plugin.gradle.dsl.kotless
 
 plugins {
 	kotlin("jvm") version "1.4.21"
 	kotlin("plugin.serialization") version "1.5.20"
-	id("io.kotless") version "0.2.0-g" apply true
+	id("io.kotless") version "0.2.0-f" apply true
 	id("com.meiuwa.gradle.sass") version "2.0.0"
 }
 
 group = "org.liamjd.kotless"
-version = "0.1.0-SNAPSHOT"
+version = "0.1.1-SNAPSHOT"
 
 val ktorVersion by extra("1.5.0")
 val kotlinVersion by extra("1.4.21")
@@ -69,7 +70,8 @@ kotless {
 		}
 
 		optimization {
-			mergeLambda = io.kotless.KotlessConfig.Optimization.MergeLambda.None
+			mergeLambda = io.kotless.KotlessConfig.Optimization.MergeLambda.All
+			autowarm = KotlessGradleConfig.Optimization.Autowarm(enable = true, minutes = 15)
 		}
 	}
 
